@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    cap = new VideoCapture(0);
+    cap = new VideoCapture((int) 0, cv::CAP_ANY);
     winSelected = false;
 
     colorImage.create(240,320,CV_8UC3);
@@ -46,8 +46,8 @@ void MainWindow::compute()
     {
         *cap >> colorImage;
         cv::resize(colorImage, colorImage, Size(320,240));
-        cvtColor(colorImage, grayImage, CV_BGR2GRAY);
-        cvtColor(colorImage, colorImage, CV_BGR2RGB);
+        cvtColor(colorImage, grayImage, COLOR_BGR2GRAY);
+        cvtColor(colorImage, colorImage, COLOR_BGR2RGB);
 
     }
 
@@ -120,12 +120,12 @@ void MainWindow::deselectWindow()
 
 void MainWindow::modifyRGB()
 {
-    ui->R->setAttribute(ui->R,true);
-    ui->G->setAttribute(ui->G,true);
-    ui->B->setAttribute(ui->B,true);
-    if (ui->R->checkState()) {
+//    ui->R->setAttribute(ui->R,true);
+//    ui->G->setAttribute(ui->G,true);
+//    ui->B->setAttribute(ui->B,true);
+//    if (ui->R->checkState()) {
 
-    }
+//    }
 
 }
 
