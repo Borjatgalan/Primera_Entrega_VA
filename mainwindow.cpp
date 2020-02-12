@@ -1,13 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    cap = new VideoCapture((int) 0, cv::CAP_ANY);
+    cap = new VideoCapture(0);
     winSelected = false;
 
     colorImage.create(240,320,CV_8UC3);
@@ -46,14 +47,14 @@ void MainWindow::compute()
     {
         *cap >> colorImage;
         cv::resize(colorImage, colorImage, Size(320,240));
-        cvtColor(colorImage, grayImage, COLOR_BGR2GRAY);
-        cvtColor(colorImage, colorImage, COLOR_BGR2RGB);
+        cvtColor(colorImage, grayImage, CV_BGR2GRAY);
+        cvtColor(colorImage, colorImage, CV_BGR2RGB);
 
     }
 
 
     //En este punto se debe incluir el código asociado con el procesamiento de cada captura
-
+    modifyRGB();
 
     //Actualización de los visores
 
@@ -120,12 +121,32 @@ void MainWindow::deselectWindow()
 
 void MainWindow::modifyRGB()
 {
-//    ui->R->setAttribute(ui->R,true);
-//    ui->G->setAttribute(ui->G,true);
-//    ui->B->setAttribute(ui->B,true);
-//    if (ui->R->checkState()) {
+    Mat imageAux = colorImage.clone();
+    Mat R,G,B;
+    Mat outputMat[3];
+    split(imageAux, outputMat);
 
-//    }
+    if (ui->R->isChecked()) {
+        R = outputMat[0];
+    }
+    else{
+        R = 0;
+    }
+    if (ui->G->isChecked()) {
+        G = outputMat[1];
+    }
+    else{
+        G = 0;
+    }
+    if (ui->B->isChecked()) {
+        B = outputMat[2];
+    }
+    else{
+        B = 0;
+    }
+
+    merge();
+
 
 }
 

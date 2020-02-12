@@ -191,6 +191,9 @@
     <property name="text">
      <string>R</string>
     </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QCheckBox" name="G">
     <property name="geometry">
@@ -204,6 +207,9 @@
     <property name="text">
      <string>G</string>
     </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QCheckBox" name="B">
     <property name="geometry">
@@ -216,6 +222,9 @@
     </property>
     <property name="text">
      <string>B</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
