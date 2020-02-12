@@ -42,6 +42,8 @@ MainWindow::~MainWindow()
 void MainWindow::compute()
 {
 
+
+
     //Captura de imagen
     if(ui->captureButton->isChecked() && cap->isOpened())
     {
@@ -51,7 +53,6 @@ void MainWindow::compute()
         cvtColor(colorImage, colorImage, CV_BGR2RGB);
 
     }
-
 
     //En este punto se debe incluir el código asociado con el procesamiento de cada captura
     modifyRGB();
@@ -121,32 +122,38 @@ void MainWindow::deselectWindow()
 
 void MainWindow::modifyRGB()
 {
-    Mat imageAux = colorImage.clone();
+    std::vector<Mat> dest;
+
+    std::vector<Mat> channels;
+    split(colorImage, channels);
+
+    Mat zero = Mat::zeros(colorImage.size(), CV_8UC1);
     Mat R,G,B;
-    Mat outputMat[3];
-    split(imageAux, outputMat);
 
     if (ui->R->isChecked()) {
-        R = outputMat[0];
+        R = channels[0];
     }
     else{
-        R = 0;
+        R = zero;
     }
     if (ui->G->isChecked()) {
-        G = outputMat[1];
+        G = channels[1];
     }
     else{
-        G = 0;
+        G = zero;
     }
     if (ui->B->isChecked()) {
-        B = outputMat[2];
+        B = channels[2];
     }
     else{
-        B = 0;
+        B = zero;
     }
 
-    merge();
-
+    dest = {R,G,B};
+    merge(dest, imageAuxDest);
+    imageAuxDest.copyTo(destColorImage);
+    visorS->setImage(&imageAuxDest);
+//    visorD->setImage(&destColorImage);
 
 }
 

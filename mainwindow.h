@@ -37,6 +37,7 @@ private:
     ImgViewer *visorS, *visorD;
     Mat colorImage, grayImage;
     Mat destColorImage, destGrayImage;
+    Mat imageAuxOrig, imageAuxDest, R, G, B;
     bool winSelected;
     Rect imageWindow;
 

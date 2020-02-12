@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>860</width>
+    <width>897</width>
     <height>416</height>
    </rect>
   </property>
@@ -165,11 +165,14 @@
    </property>
   </widget>
   <widget class="QFrame" name="frame_rgb">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>730</x>
      <y>100</y>
-     <width>120</width>
+     <width>141</width>
      <height>41</height>
     </rect>
    </property>
@@ -379,5 +382,22 @@
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>colorButton</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>frame_rgb</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>773</x>
+     <y>76</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>815</x>
+     <y>102</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
