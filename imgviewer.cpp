@@ -203,7 +203,7 @@ void ImgViewer::paintEvent ( QPaintEvent * )
         switch(ocvimg->type())
         {
             case CV_8UC1:
-                cvtColor(*ocvimg, auxImage, CV_GRAY2RGB);
+                cvtColor(*ocvimg, auxImage, COLOR_GRAY2RGB);
                 memcpy(qimg->bits(), auxImage.data , width*height*3*sizeof(uchar));
                 break;
             case CV_8UC3:

@@ -50,8 +50,8 @@ void MainWindow::compute()
     {
         *cap >> colorImage;
         cv::resize(colorImage, colorImage, Size(320,240));
-        cvtColor(colorImage, grayImage, CV_BGR2GRAY);
-        cvtColor(colorImage, colorImage, CV_BGR2RGB);
+        cvtColor(colorImage, grayImage, COLOR_BGR2GRAY);
+        cvtColor(colorImage, colorImage, COLOR_BGR2RGB);
 
     }
 
