@@ -37,7 +37,8 @@ private:
     ImgViewer *visorS, *visorD;
     Mat colorImage, grayImage;
     Mat destColorImage, destGrayImage;
-    Mat imageAuxOrig, imageAuxDest, R, G, B;
+    Mat grayImageAux, destGrayImageAux;
+    Mat colorImageAux, destColorImageAux, R, G, B;
     bool winSelected;
     Rect imageWindow;
 
@@ -49,6 +50,7 @@ public slots:
     void selectWindow(QPointF p, int w, int h);
     void deselectWindow();
     void modifyRGB();
+    void loadFromFile();
 
 };
 

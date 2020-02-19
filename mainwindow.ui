@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>897</width>
+    <width>900</width>
     <height>416</height>
    </rect>
   </property>
@@ -232,6 +232,9 @@
    </widget>
   </widget>
   <widget class="QFrame" name="frame_diales">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -396,6 +399,22 @@
     <hint type="destinationlabel">
      <x>815</x>
      <y>102</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>warp_zoom</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>frame_diales</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>762</x>
+     <y>366</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>698</x>
+     <y>363</y>
     </hint>
    </hints>
   </connection>

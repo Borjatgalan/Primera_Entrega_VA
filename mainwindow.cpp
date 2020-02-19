@@ -10,7 +10,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     cap = new VideoCapture(0);
     winSelected = false;
-
     colorImage.create(240,320,CV_8UC3);
     grayImage.create(240,320,CV_8UC1);
     destColorImage.create(240,320,CV_8UC3);
@@ -24,6 +23,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->colorButton,SIGNAL(clicked(bool)),this,SLOT(change_color_gray(bool)));
     connect(visorS,SIGNAL(windowSelected(QPointF, int, int)),this,SLOT(selectWindow(QPointF, int, int)));
     connect(visorS,SIGNAL(pressEvent()),this,SLOT(deselectWindow()));
+    connect(ui->loadFromFile,SIGNAL(pressed()),this,SLOT(loadFromFile()));
+
+
     timer.start(30);
 }
 
@@ -38,12 +40,9 @@ MainWindow::~MainWindow()
     destColorImage.release();
     destGrayImage.release();
 }
-
+//////////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::compute()
 {
-
-
-
     //Captura de imagen
     if(ui->captureButton->isChecked() && cap->isOpened())
     {
@@ -56,6 +55,7 @@ void MainWindow::compute()
 
     //En este punto se debe incluir el código asociado con el procesamiento de cada captura
     modifyRGB();
+
 
     //Actualización de los visores
 
@@ -122,38 +122,68 @@ void MainWindow::deselectWindow()
 
 void MainWindow::modifyRGB()
 {
-    std::vector<Mat> dest;
+    std::vector<Mat> dest, dest2;
 
-    std::vector<Mat> channels;
+    std::vector<Mat> channels, channels_dest;
     split(colorImage, channels);
+    split(destColorImage, channels_dest);
 
     Mat zero = Mat::zeros(colorImage.size(), CV_8UC1);
     Mat R,G,B;
+    Mat R2,G2,B2;
+    if(ui->colorButton->isChecked()){
+        if (ui->R->isChecked()) {
+            R = channels[0];
+            R2 = channels_dest[0];
+        }
+        else{
+            R = zero;
+            R2 = zero;
+        }
+        if (ui->G->isChecked()) {
+            G = channels[1];
+            G2 = channels_dest[1];
+        }
+        else{
+            G = zero;
+            G2 = zero;
+        }
+        if (ui->B->isChecked()) {
+            B = channels[2];
+            B2 = channels_dest[2];
+        }
+        else{
+            B = zero;
+            B2 = zero;
+        }
 
-    if (ui->R->isChecked()) {
-        R = channels[0];
-    }
-    else{
-        R = zero;
-    }
-    if (ui->G->isChecked()) {
-        G = channels[1];
-    }
-    else{
-        G = zero;
-    }
-    if (ui->B->isChecked()) {
-        B = channels[2];
-    }
-    else{
-        B = zero;
-    }
+        dest = {R,G,B};
+        dest2 = {R2,G2,B2};
+        merge(dest, colorImageAux);
+        merge(dest2, destColorImageAux);
+        visorS->setImage(&colorImageAux);
+        visorD->setImage(&destColorImageAux);
 
-    dest = {R,G,B};
-    merge(dest, imageAuxDest);
-    imageAuxDest.copyTo(destColorImage);
-    visorS->setImage(&imageAuxDest);
-//    visorD->setImage(&destColorImage);
+    }
+    else
+        visorS->setImage(&grayImage);
+
+}
+
+void MainWindow::loadFromFile()
+{
+    disconnect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
+    Mat image;
+    QString file = QFileDialog::getOpenFileName(this,tr("Open"), "/home",tr("Images(*.png *.jpg *.jpeg *.bmp *.xpm)"));
+    image = cv::imread(file.toStdString());
+
+    ui->captureButton->setChecked(false);
+    ui->captureButton->setText("Start capture");
+    cv::resize(image, colorImage, Size(320, 240));
+    cvtColor(colorImage, colorImage, COLOR_BGR2RGB);
+    cvtColor(colorImage, grayImage, COLOR_RGB2GRAY);
+
+    connect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
 
 }
 
