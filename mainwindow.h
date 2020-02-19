@@ -51,6 +51,8 @@ public slots:
     void deselectWindow();
     void modifyRGB();
     void loadFromFile();
+    void saveToFile();
+    void copy();
 
 };
 

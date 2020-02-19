@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(visorS,SIGNAL(windowSelected(QPointF, int, int)),this,SLOT(selectWindow(QPointF, int, int)));
     connect(visorS,SIGNAL(pressEvent()),this,SLOT(deselectWindow()));
     connect(ui->loadFromFile,SIGNAL(pressed()),this,SLOT(loadFromFile()));
+    connect(ui->SaveToFile,SIGNAL(pressed()),this,SLOT(saveToFile()));
+    connect(ui->Copy,SIGNAL(pressed()),this,SLOT(copy()));
 
 
     timer.start(30);
@@ -185,6 +187,35 @@ void MainWindow::loadFromFile()
 
     connect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
 
+}
+
+void MainWindow::saveToFile()
+{
+    disconnect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
+
+
+    Mat image;
+    QString file = QFileDialog::getSaveFileName(this, tr("Save Image File"),
+                                                    QString(),
+                                                    tr("Images (*.png *.jpg *.jpeg *.bmp *.xpm)"));
+    cvtColor(colorImage, colorImageAux, COLOR_RGB2BGR);
+    cvtColor(grayImage, grayImageAux, COLOR_GRAY2BGR);
+    image = cv::imwrite(file.toStdString(), image);
+
+    connect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
+}
+
+void MainWindow::copy()
+{
+    Rect winD;
+    winD.x = (320 - winD.width) / 2;
+    winD.y = (240 - winD.height) / 2;
+    if(ui->colorButton->isChecked()){
+        image.copyTo(destColorImageAux(winD));
+    }
+    else{
+        image.copyTo(destGrayImageAux(winD));
+    }
 }
 
 
