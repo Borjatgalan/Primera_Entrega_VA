@@ -25,6 +25,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
@@ -36,6 +37,8 @@ private:
     ImgViewer *visorS, *visorD;
     Mat colorImage, grayImage;
     Mat destColorImage, destGrayImage;
+    Mat grayImageAux, destGrayImageAux;
+    Mat colorImageAux, destColorImageAux, R, G, B;
     bool winSelected;
     Rect imageWindow;
 
@@ -47,6 +50,9 @@ public slots:
     void selectWindow(QPointF p, int w, int h);
     void deselectWindow();
     void modifyRGB();
+    void loadFromFile();
+    void saveToFile();
+    void copy();
 
 };
 

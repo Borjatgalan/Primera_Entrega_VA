@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>860</width>
+    <width>900</width>
     <height>416</height>
    </rect>
   </property>
@@ -165,11 +165,14 @@
    </property>
   </widget>
   <widget class="QFrame" name="frame_rgb">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>730</x>
      <y>100</y>
-     <width>120</width>
+     <width>141</width>
      <height>41</height>
     </rect>
    </property>
@@ -191,6 +194,9 @@
     <property name="text">
      <string>R</string>
     </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QCheckBox" name="G">
     <property name="geometry">
@@ -203,6 +209,9 @@
     </property>
     <property name="text">
      <string>G</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QCheckBox" name="B">
@@ -217,9 +226,15 @@
     <property name="text">
      <string>B</string>
     </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
    </widget>
   </widget>
   <widget class="QFrame" name="frame_diales">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -370,5 +385,38 @@
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>colorButton</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>frame_rgb</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>773</x>
+     <y>76</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>815</x>
+     <y>102</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>warp_zoom</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>frame_diales</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>762</x>
+     <y>366</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>698</x>
+     <y>363</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
