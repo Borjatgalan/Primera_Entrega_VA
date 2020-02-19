@@ -208,13 +208,15 @@ void MainWindow::saveToFile()
 void MainWindow::copy()
 {
     Rect winD;
+    winD.height = imageWindow.height;
+    winD.width = imageWindow.width;
     winD.x = (320 - winD.width) / 2;
     winD.y = (240 - winD.height) / 2;
     if(ui->colorButton->isChecked()){
-        image.copyTo(destColorImageAux(winD));
+        destColorImage.copyTo(destColorImageAux(winD));
     }
     else{
-        image.copyTo(destGrayImageAux(winD));
+        destGrayImage.copyTo(destGrayImageAux(winD));
     }
 }
 
