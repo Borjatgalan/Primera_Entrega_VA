@@ -176,6 +176,7 @@ void MainWindow::modifyRGB()
 void MainWindow::loadFromFile()
 {
     disconnect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
+
     Mat image;
     QString file = QFileDialog::getOpenFileName(this,tr("Open"), "/home",tr("Images(*.png *.jpg *.jpeg *.bmp *.xpm)"));
     image = cv::imread(file.toStdString());
@@ -202,7 +203,6 @@ void MainWindow::saveToFile()
         cvtColor(grayImage, grayImageAux, COLOR_GRAY2BGR);
         save_image = grayImageAux;
     }
-
     QString file = QFileDialog::getSaveFileName(this, tr("Save Image File"),
                                                 QString(),
                                                 tr("Images (*.png *.jpg *.jpeg *.bmp *.xpm)"));
@@ -222,27 +222,30 @@ void MainWindow::copy()
         winD.width = imageWindow.width;
         winD.x = (320 - winD.width) / 2;
         winD.y = (240 - winD.height) / 2;
-        Mat color_roi = Mat(colorImage,winD);
-        Mat gray_roi = Mat(grayImage,winD);
         if(ui->colorButton->isChecked()){
-            zero_color.copyTo(destColorImage);
             printf("Copia realizada en color...\n");
-//            colorImage.copyTo(destColorImage(Rect(winD.x,winD.y,winD.width,winD.height)));
+            zero_color.copyTo(destColorImage);
+            Mat color_roi = Mat(colorImage,winD);
             color_roi.copyTo(destColorImage);
         }
         else{
-            zero_gray.copyTo(destGrayImage);
             printf("Copia realizada en escala de grises...\n");
-//            grayImage.copyTo(destGrayImage(Rect(winD.x,winD.y,winD.width,winD.height)));
+            zero_gray.copyTo(destGrayImage);
+            Mat gray_roi = Mat(grayImage,winD);
             gray_roi.copyTo(destGrayImage);
         }
+    }else
+    {
+        if(ui->colorButton->isChecked())
+            colorImage.copyTo(destColorImage);
+        else
+            grayImage.copyTo(destGrayImage);
     }
 }
 
 void MainWindow::resize()
 {
     if(winSelected){
-
         Rect winD;
         winD.height = imageWindow.height;
         winD.width = imageWindow.width;
@@ -261,7 +264,6 @@ void MainWindow::resize()
             cv::resize(gray_roi, destGrayImageAux, Size(320,240));
             destGrayImageAux.copyTo(destGrayImage);
         }
-
     }
 }
 
