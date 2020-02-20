@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->loadFromFile,SIGNAL(pressed()),this,SLOT(loadFromFile()));
     connect(ui->SaveToFile,SIGNAL(pressed()),this,SLOT(saveToFile()));
     connect(ui->Copy,SIGNAL(pressed()),this,SLOT(copy()));
+    connect(ui->resize,SIGNAL(pressed()),this,SLOT(resize()));
 
 
     timer.start(30);
@@ -192,14 +193,15 @@ void MainWindow::loadFromFile()
 void MainWindow::saveToFile()
 {
     disconnect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
+    if(ui->colorButton)
+        cvtColor(grayImage, grayImageAux, COLOR_GRAY2BGR);
+    else
+        cvtColor(colorImage, colorImageAux, COLOR_RGB2BGR);
 
-
-    Mat image;
     QString file = QFileDialog::getSaveFileName(this, tr("Save Image File"),
-                                                    QString(),
-                                                    tr("Images (*.png *.jpg *.jpeg *.bmp *.xpm)"));
-    cvtColor(colorImage, colorImageAux, COLOR_RGB2BGR);
-    cvtColor(grayImage, grayImageAux, COLOR_GRAY2BGR);
+                                                QString(),
+                                                tr("Images (*.png *.jpg *.jpeg *.bmp *.xpm)"));
+    Mat image;
     image = cv::imwrite(file.toStdString(), image);
 
     connect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
@@ -209,19 +211,45 @@ void MainWindow::copy()
 {
     if(winSelected){
         Rect winD;
-        Mat zero_color = Mat::zeros(colorImage.size(), CV_8UC3);
-        Mat zero_gray = Mat::zeros(grayImage.size(), CV_8UC1);
+        Mat zero_color = Mat::zeros(destColorImage.size(), CV_8UC3);
+        Mat zero_gray = Mat::zeros(destGrayImage.size(), CV_8UC1);
+
         winD.height = imageWindow.height;
         winD.width = imageWindow.width;
         winD.x = (320 - winD.width) / 2;
         winD.y = (240 - winD.height) / 2;
+
         if(ui->colorButton->isChecked()){
-            colorImage.copyTo(destColorImage(winD));
+            zero_color.copyTo(destColorImage);
+            printf("Copia realizada en color...\n");
+            colorImage.copyTo(destColorImage(Rect(winD.x,winD.y,winD.width,winD.height)));
         }
         else{
-            destGrayImage.copyTo(destGrayImageAux(winD));
+            zero_gray.copyTo(destGrayImage);
+            printf("Copia realizada en escala de grises...\n");
+            grayImage.copyTo(destGrayImage(Rect(winD.x,winD.y,winD.width,winD.height)));
         }
     }
+}
+
+void MainWindow::resize()
+{
+    Rect winD;
+    winD.height = imageWindow.height;
+    winD.width = imageWindow.width;
+    winD.x = imageWindow.x;
+    winD.y = imageWindow.y;
+    Mat image;
+
+    if(!ui->colorButton)
+    {
+        cv::resize(winSelected, image, Size(320,240));
+        image.copyTo(destColorImage);
+    }else{
+        cv::resize(winSelected, image, Size(320,240));
+        image.copyTo(destGrayImage);
+    }
+
 }
 
 
