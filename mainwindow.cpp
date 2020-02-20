@@ -193,16 +193,20 @@ void MainWindow::loadFromFile()
 void MainWindow::saveToFile()
 {
     disconnect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
-    if(ui->colorButton)
-        cvtColor(grayImage, grayImageAux, COLOR_GRAY2BGR);
-    else
+    Mat save_image;
+    if(ui->colorButton->isChecked()){
         cvtColor(colorImage, colorImageAux, COLOR_RGB2BGR);
+        save_image = colorImageAux;
+   }
+    else{
+        cvtColor(grayImage, grayImageAux, COLOR_GRAY2BGR);
+        save_image = grayImageAux;
+    }
 
     QString file = QFileDialog::getSaveFileName(this, tr("Save Image File"),
                                                 QString(),
                                                 tr("Images (*.png *.jpg *.jpeg *.bmp *.xpm)"));
-    Mat image;
-    image = cv::imwrite(file.toStdString(), image);
+    cv::imwrite(file.toStdString(), save_image);
 
     connect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
 }
@@ -218,38 +222,47 @@ void MainWindow::copy()
         winD.width = imageWindow.width;
         winD.x = (320 - winD.width) / 2;
         winD.y = (240 - winD.height) / 2;
-
+        Mat color_roi = Mat(colorImage,winD);
+        Mat gray_roi = Mat(grayImage,winD);
         if(ui->colorButton->isChecked()){
             zero_color.copyTo(destColorImage);
             printf("Copia realizada en color...\n");
-            colorImage.copyTo(destColorImage(Rect(winD.x,winD.y,winD.width,winD.height)));
+//            colorImage.copyTo(destColorImage(Rect(winD.x,winD.y,winD.width,winD.height)));
+            color_roi.copyTo(destColorImage);
         }
         else{
             zero_gray.copyTo(destGrayImage);
             printf("Copia realizada en escala de grises...\n");
-            grayImage.copyTo(destGrayImage(Rect(winD.x,winD.y,winD.width,winD.height)));
+//            grayImage.copyTo(destGrayImage(Rect(winD.x,winD.y,winD.width,winD.height)));
+            gray_roi.copyTo(destGrayImage);
         }
     }
 }
 
 void MainWindow::resize()
 {
-    Rect winD;
-    winD.height = imageWindow.height;
-    winD.width = imageWindow.width;
-    winD.x = imageWindow.x;
-    winD.y = imageWindow.y;
-    Mat image;
+    if(winSelected){
 
-    if(!ui->colorButton)
-    {
-        cv::resize(winSelected, image, Size(320,240));
-        image.copyTo(destColorImage);
-    }else{
-        cv::resize(winSelected, image, Size(320,240));
-        image.copyTo(destGrayImage);
+        Rect winD;
+        winD.height = imageWindow.height;
+        winD.width = imageWindow.width;
+        winD.x = imageWindow.x;
+        winD.y = imageWindow.y;
+        Mat color_roi = Mat(colorImage,winD);
+        Mat gray_roi = Mat(grayImage,winD);
+
+        if(ui->colorButton->isChecked())
+        {
+            printf("Imagen redimensionada en color...\n");
+            cv::resize(color_roi, destColorImageAux, Size(320,240));
+            destColorImageAux.copyTo(destColorImage);
+        }else{
+            printf("Imagen redimensionada en escala de grises...\n");
+            cv::resize(gray_roi, destGrayImageAux, Size(320,240));
+            destGrayImageAux.copyTo(destGrayImage);
+        }
+
     }
-
 }
 
 
