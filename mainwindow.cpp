@@ -126,8 +126,8 @@ void MainWindow::deselectWindow()
 void MainWindow::modifyRGB()
 {
     std::vector<Mat> dest, dest2;
-
     std::vector<Mat> channels, channels_dest;
+
     split(colorImage, channels);
     split(destColorImage, channels_dest);
 
@@ -178,9 +178,18 @@ void MainWindow::loadFromFile()
     disconnect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
 
     Mat image;
-    QString file = QFileDialog::getOpenFileName(this,tr("Open"), "/home",tr("Images(*.png *.jpg *.jpeg *.bmp *.xpm)"));
-    image = cv::imread(file.toStdString());
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Open"), "/home",tr("Images (*.jpg *.png "
+                                                                                "*.jpeg *.gif);;All Files(*)"));
+    image = cv::imread(fileName.toStdString());
 
+    if (fileName.isEmpty())
+            return;
+        else {
+            QFile file(fileName);
+            if (!file.open(QIODevice::ReadOnly)) {
+                QMessageBox::information(this, tr("Unable to open file"), file.errorString());
+                return;
+            }
     ui->captureButton->setChecked(false);
     ui->captureButton->setText("Start capture");
     cv::resize(image, colorImage, Size(320, 240));
@@ -190,23 +199,33 @@ void MainWindow::loadFromFile()
     connect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
 
 }
+}
 
 void MainWindow::saveToFile()
 {
     disconnect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
     Mat save_image;
-    if(ui->colorButton->isChecked()){
-        cvtColor(colorImage, colorImageAux, COLOR_RGB2BGR);
-        save_image = colorImageAux;
-   }
-    else{
-        cvtColor(grayImage, grayImageAux, COLOR_GRAY2BGR);
-        save_image = grayImageAux;
-    }
-    QString file = QFileDialog::getSaveFileName(this, tr("Save Image File"),
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"),
                                                 QString(),
-                                                tr("Images (*.png *.jpg *.jpeg *.bmp *.xpm)"));
-    cv::imwrite(file.toStdString(), save_image);
+                                                tr("JPG (*.jpg);; PNG (*.png);;"
+                                                   "JPEG(*.jpeg);; GIF(*.gif);; All Files (*)"));
+    if(ui->colorButton->isChecked())
+        cvtColor(destColorImage, save_image, COLOR_RGB2BGR);
+
+    else
+        cvtColor(destGrayImage, save_image, COLOR_GRAY2BGR);
+
+    if (fileName.isEmpty())
+            return;
+        else {
+            QFile file(fileName);
+            if (!file.open(QIODevice::WriteOnly)) {
+                QMessageBox::information(this, tr("Unable to open file"),
+                    file.errorString());
+                return;
+            }
+         }
+    cv::imwrite(fileName.toStdString(), save_image);
 
     connect(&timer,SIGNAL(timeout()),this,SLOT(compute()));
 }
@@ -225,14 +244,16 @@ void MainWindow::copy()
         if(ui->colorButton->isChecked()){
             printf("Copia realizada en color...\n");
             zero_color.copyTo(destColorImage);
-            Mat color_roi = Mat(colorImage,winD);
-            color_roi.copyTo(destColorImage);
+            Mat color_roi = Mat(colorImage,imageWindow);
+            Mat destColorROI = Mat(destColorImage,winD);
+            color_roi.copyTo(destColorROI);
         }
         else{
             printf("Copia realizada en escala de grises...\n");
             zero_gray.copyTo(destGrayImage);
-            Mat gray_roi = Mat(grayImage,winD);
-            gray_roi.copyTo(destGrayImage);
+            Mat gray_roi = Mat(grayImage,imageWindow);
+            Mat destGrayROI = Mat(destGrayImage,winD);
+            gray_roi.copyTo(destGrayROI);
         }
     }else
     {
@@ -243,6 +264,7 @@ void MainWindow::copy()
     }
 }
 
+//Corregir: cuando se guarda en color, se modifica el visorDestino a BGR
 void MainWindow::resize()
 {
     if(winSelected){
@@ -257,12 +279,12 @@ void MainWindow::resize()
         if(ui->colorButton->isChecked())
         {
             printf("Imagen redimensionada en color...\n");
-            cv::resize(color_roi, destColorImageAux, Size(320,240));
-            destColorImageAux.copyTo(destColorImage);
+            cv::resize(color_roi, destColorImage, Size(320,240));
+            destColorImage.copyTo(destColorImageAux);
         }else{
             printf("Imagen redimensionada en escala de grises...\n");
-            cv::resize(gray_roi, destGrayImageAux, Size(320,240));
-            destGrayImageAux.copyTo(destGrayImage);
+            cv::resize(gray_roi, destGrayImage, Size(320,240));
+            destGrayImage.copyTo(destGrayImageAux);
         }
     }
 }
