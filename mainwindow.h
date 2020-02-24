@@ -58,6 +58,7 @@ public slots:
     void saveToFile();
     void copy();
     void resize();
+    void enlarge();
 
 };
 

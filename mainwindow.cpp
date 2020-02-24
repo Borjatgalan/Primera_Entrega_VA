@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->SaveToFile,SIGNAL(pressed()),this,SLOT(saveToFile()));
     connect(ui->Copy,SIGNAL(pressed()),this,SLOT(copy()));
     connect(ui->resize,SIGNAL(pressed()),this,SLOT(resize()));
+    connect(ui->enlarge,SIGNAL(pressed()),this,SLOT(enlarge()));
 
 
     timer.start(30);
@@ -286,6 +287,48 @@ void MainWindow::resize()
             cv::resize(gray_roi, destGrayImage, Size(320,240));
             destGrayImage.copyTo(destGrayImageAux);
         }
+    }
+}
+
+void MainWindow::enlarge(){
+    int fx, fy;
+    if(winSelected){
+        Rect winD;
+        winD.height = imageWindow.height;
+        winD.width = imageWindow.width;
+        winD.x = imageWindow.x;
+        winD.y = imageWindow.y;
+        fx = 320/winD.width;
+        fy = 240/winD.height;
+        Mat color_roi = Mat(colorImage,winD);
+        Mat gray_roi = Mat(grayImage,winD);
+
+        if(ui->colorButton->isChecked())
+        {
+            if(fx < fy){
+                printf("Imagen alargada en color a lo largo...\n");
+                cv::resize(color_roi, destColorImage, Size(320,winD.width));
+                destColorImage.copyTo(destColorImageAux);
+            }
+            else{
+                printf("Imagen alargada en color a lo ancho...\n");
+                cv::resize(color_roi, destColorImage, Size(winD.height,240));
+                destColorImage.copyTo(destColorImageAux);
+            }
+        }
+        else{
+            if(fx < fy){
+                printf("Imagen alargada en blanco y negro a lo largo...\n");
+                cv::resize(gray_roi, destGrayImage, Size(320,winD.width));
+                destGrayImage.copyTo(destGrayImageAux);
+            }
+            else{
+                printf("Imagen alargada en blanco y negro a lo ancho...\n");
+                cv::resize(gray_roi, destGrayImage, Size(winD.height,240));
+                destGrayImage.copyTo(destGrayImageAux);
+            }
+        }
+
     }
 }
 
