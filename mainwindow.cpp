@@ -333,3 +333,5 @@ void MainWindow::enlarge(){
 }
 
 
+
+
