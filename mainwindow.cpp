@@ -1,6 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+//
+//
+//      AUTORES:
+//
+//      Borja Alberto Tirado Galán
+//
+//      Iván González Domínguez
+//
+//
+//
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -295,66 +305,79 @@ void MainWindow::enlarge(){
         float fx, fy;
         Rect winD;
 
-
+        Mat color_roi = Mat(colorImage,imageWindow);
         Mat gray_roi = Mat(grayImage,imageWindow);
 
         if(ui->colorButton->isChecked())
         {
-            fx = 320/color_roi.cols;
-            fy = 240/color_roi.rows;
+            fx = 320./color_roi.cols;
+            fy = 240./color_roi.rows;
 
             if(fx > fy){
                 printf("Imagen alargada en color a lo largo...\n");
                 Mat dest_color_roi_enlarged;
-                color_roi.copyTo(dest_color_roi_enlarged);
                 int wEnlarged = rint(color_roi.cols*fy);
-                cv::resize(dest_color_roi_enlarged, destColorImageAux, Size(wEnlarged,240));
+                cv::resize(color_roi,dest_color_roi_enlarged, Size(wEnlarged,240));
 
                 winD.height = dest_color_roi_enlarged.rows;
                 winD.width = dest_color_roi_enlarged.cols;
                 winD.x = (320 - winD.width)/2;
                 winD.y = (240 - winD.height)/2;
 
-                Mat dest_color_roi = Mat(dest_color_roi_enlarged,winD);
-                color_roi.copyTo(dest_color_roi);
+                Mat dest_color_roi = Mat(destColorImage,winD);
+                dest_color_roi_enlarged.copyTo(dest_color_roi);
             }
             else{
                 printf("Imagen alargada en color a lo ancho...\n");
                 Mat dest_color_roi_enlarged;
                 color_roi.copyTo(dest_color_roi_enlarged);
                 int hEnlarged = rint(color_roi.rows*fx);
-                cv::resize(dest_color_roi_enlarged, destColorImageAux, Size(320,hEnlarged));
+                cv::resize(color_roi, dest_color_roi_enlarged, Size(320,hEnlarged));
 
                 winD.height = dest_color_roi_enlarged.rows;
                 winD.width = dest_color_roi_enlarged.cols;
                 winD.x = (320 - winD.width)/2;
                 winD.y = (240 - winD.height)/2;
 
-                Mat dest_color_roi = Mat(dest_color_roi_enlarged,winD);
+                Mat dest_color_roi = Mat(destColorImage,winD);
 
-                color_roi.copyTo(dest_color_roi);
+                dest_color_roi_enlarged.copyTo(dest_color_roi);
             }
         }
         else{
 
-            fx = 320/gray_roi.cols;
-            fy = 240/gray_roi.rows;
+            fx = 320./gray_roi.cols;
+            fy = 240./gray_roi.rows;
 
             if(fx > fy){
                 printf("Imagen alargada en blanco y negro a lo largo...\n");
                 Mat dest_gray_roi_enlarged;
-                gray_roi.copyTo(dest_gray_roi_enlarged);
                 int wEnlarged = rint(gray_roi.cols*fy);
-                cv::resize(dest_gray_roi_enlarged, destGrayImageAux, Size(wEnlarged,240));
-                destGrayImage.copyTo(destGrayImageAux);
+                cv::resize(gray_roi,dest_gray_roi_enlarged, Size(wEnlarged,240));
+
+                winD.height = dest_gray_roi_enlarged.rows;
+                winD.width = dest_gray_roi_enlarged.cols;
+                winD.x = (320 - winD.width)/2;
+                winD.y = (240 - winD.height)/2;
+
+                Mat dest_gray_roi = Mat(destGrayImage,winD);
+                dest_gray_roi_enlarged.copyTo(dest_gray_roi);
             }
             else{
                 printf("Imagen alargada en blanco y negro a lo ancho...\n");
                 Mat dest_gray_roi_enlarged;
                 gray_roi.copyTo(dest_gray_roi_enlarged);
                 int hEnlarged = rint(gray_roi.rows*fx);
-                cv::resize(dest_gray_roi_enlarged, destGrayImageAux, Size(320,hEnlarged));
-                destGrayImage.copyTo(destGrayImageAux);;
+                cv::resize(gray_roi, dest_gray_roi_enlarged, Size(320,hEnlarged));
+
+                winD.height = dest_gray_roi_enlarged.rows;
+                winD.width = dest_gray_roi_enlarged.cols;
+                winD.x = (320 - winD.width)/2;
+                winD.y = (240 - winD.height)/2;
+
+                Mat dest_gray_roi = Mat(destGrayImage,winD);
+
+                dest_gray_roi_enlarged.copyTo(dest_gray_roi);
             }
         }
 
