@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 
 //
-//
+//      imageTreatment_ArtificialVision
 //      AUTORES:
 //
 //      Borja Alberto Tirado Galán
@@ -305,11 +305,15 @@ void MainWindow::enlarge(){
         float fx, fy;
         Rect winD;
 
+        Mat zero_color = Mat::zeros(destColorImage.size(), CV_8UC3);
+        Mat zero_gray = Mat::zeros(destGrayImage.size(), CV_8UC1);
+
         Mat color_roi = Mat(colorImage,imageWindow);
         Mat gray_roi = Mat(grayImage,imageWindow);
 
         if(ui->colorButton->isChecked())
         {
+            zero_color.copyTo(destColorImage);
             fx = 320./color_roi.cols;
             fy = 240./color_roi.rows;
 
@@ -345,7 +349,7 @@ void MainWindow::enlarge(){
             }
         }
         else{
-
+            zero_gray.copyTo(destGrayImage);
             fx = 320./gray_roi.cols;
             fy = 240./gray_roi.rows;
 
